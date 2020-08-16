@@ -1,0 +1,4 @@
+npm init -y
+npm i express dotenv nodemon
+
+mongodb+srv://192495474:192495474@cluster0.oko1b.mongodb.net/kopergaondb?retryWrites=true&w=majority
