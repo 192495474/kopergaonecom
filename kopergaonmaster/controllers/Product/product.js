@@ -6,9 +6,12 @@ const Product=require('../../models/Product/product');
 const {errorHandler}=require('../../helpers/dbErrorHandlers');
 
 exports.create= (req,res)=>{
+    console.log("jhjkh");
     let form=formidable.IncomingForm();
+    console.log(form);
     form.keepExtentions=true;
     form.parse(req,(err,fields,files)=>{
+        console.log(fields);
 if(err){
     return res.status(400).json({
         err : 'Image could not found'

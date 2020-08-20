@@ -1,22 +1,20 @@
 import styled from 'styled-components';
 const CONTAINER = styled.div`
-  background: #F7F9FA;
   height: auto;
   width: 90%;
   margin: 5em auto;
   color: snow;
-  -webkit-box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.4);
-  -moz-box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.4);
-  box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.4);
-
   @media(min-width: 786px) {
-    width: 60%;
+    width: 70%;
   }
 
   label {
     color: #24B9B6;
     font-size: 1.2em;
     font-weight: 400;
+  }
+  textarea{
+    width:100%;
   }
 
   h1 {

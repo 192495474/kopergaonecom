@@ -1,5 +1,16 @@
 import API from '../../config';
+import { fetchWrapper } from '../../helpers/_Fetch-Wrapper';
+var baseUrl=`${API}`
 
-export const getCategories=()=>{
-return [{"_id":"123","name":"cate1"},{"_id":"1233","name":"cate2"},{"_id":"143","name":"cate3"}];
+export const productService={
+getCategories,
+create
+}
+
+function getCategories(){
+return fetchWrapper.get(baseUrl+"/categories");
 } 
+function create(params) {
+    return fetchWrapper.post(baseUrl+"/product/create", params);
+}
+

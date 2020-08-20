@@ -32,6 +32,10 @@ app.use(boddParser.json());
 app.use(cookieParser());
 app.use(expressValidator());
 
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    next();
+  });
 app.use('/api',authrouter);
 app.use('/api',userrouter);
 app.use('/api',addressrouter);

@@ -13,3 +13,17 @@ exports.create= (req,res)=>{
  })
     })
  };
+ exports.list=(req,res)=>{
+     console.log("jk");
+     Category.find().exec((err,data)=>{
+        if(err){
+            return res.status(404).json({
+                err:errorHandler(err)
+            });
+        }
+        
+        return res.json({
+           data
+        });
+     });
+ }

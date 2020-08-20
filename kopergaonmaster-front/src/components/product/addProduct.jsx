@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Formik, useField, useFormikContext } from 'formik';
-import {Button, Form} from 'react-bootstrap';
+import { Formik,Field} from 'formik';
+import {Form} from 'react-bootstrap';
 import * as Yup from 'yup';
-import styled from 'styled-components';
-import {getCategories} from './ProductService';
+import {productService} from './ProductService';
+import Layout from '../core/Layout';
+import AddProductDetail from './shared/_addProductDetail';
 
 //
 import CONTAINER from '../../shared/container';
 import BUTTON from '../../shared/button';
-import MYFORM from '../../shared/form';
-const categoriesarr=getCategories;
+
 const validationSchema = Yup.object().shape({
     name: Yup.string()
     .min(2, "*Service Name must have at least 2 characters")
@@ -28,13 +28,15 @@ const validationSchema = Yup.object().shape({
 
 
 const addProduct=()=> {
-    console.log(getCategories());
+    
+    
   const initialValues = { 
+    serviceCode:"",
     name:"",
     description:"",
     price:"",
     quantity:"",
-    categories:getCategories(), 
+    categories:[], 
     category:"",
     photo:"",
     shipping:"",
@@ -44,12 +46,20 @@ const addProduct=()=> {
     redirectToProfile:false,
     formData:""
   };
+  function onSubmit(params) {
+    productService.create(params).then(data=>{
+      console.log(data);
+    });
+}
+
+
   return (
+    <Layout title="Add Product" description="This is the Home page">
       <CONTAINER>
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
-        onSubmit={async values => alert(JSON.stringify(values, null, 2))
+        onSubmit={async values => onSubmit(values)
         }
       >
           
@@ -58,10 +68,33 @@ const addProduct=()=> {
           touched,
           handleChange,
           handleBlur,
-          handleSubmit }) => (
-            
-      <Form className="mx-auto"  onSubmit={handleSubmit}>
-        <Form.Group controlId="name">
+          handleSubmit }) => {
+            const [statecategory, setstatecategory] = useState(null);
+    useEffect(() => {
+      //productService.getCategories().then(objcategories => {
+        //const fields = ['title', 'firstName', 'lastName', 'email', 'role'];
+        //fields.forEach(field => setFieldValue(field, user[field], false));
+        
+        //console.log("mkk"+JSON.stringify(objcategories.data));
+        //setstatecategory(objcategories.data);
+    //});
+      //setstatecategory(getCategories());
+}, [statecategory]);
+      return(<Form className="mx-auto"  onSubmit={handleSubmit}>
+        <div className="form-row">
+        <Form.Group controlId="serviceCode" className="col-6">
+          <Form.Label>Service Coe :</Form.Label>
+          <Form.Control
+            type="text"
+            name="serviceCode"
+            placeholder="Service Code"
+            onChange={handleChange}
+            onBlur={handleBlur}
+            value={values.serviceCode}
+            />
+          
+        </Form.Group>
+        <Form.Group className="col-6" controlId="name">
           <Form.Label>Service Name :</Form.Label>
           <Form.Control
             type="text"
@@ -81,25 +114,29 @@ const addProduct=()=> {
                 <div className="error-message">{errors.name}</div>
               ): null}
         </Form.Group>
-        <Form.Group controlId="description">
-          <Form.Label>Description :</Form.Label>
-          <Form.Control
-            type="text"
-            name="description"
-            placeholder="Description"
-            /* Set onChange to handleChange */
-            onChange={handleChange}
-            /* Set onBlur to handleBlur */
-            onBlur={handleBlur}
-            /* Store the value of this input in values.name, make sure this is named the same as the name property on the form element */
-            value={values.description}
-            className={touched.description && errors.description ? "error" : null}
-          />
-          {touched.description && errors.description ? (
+
+        </div>
+        <div className="form-row">
+        <div className="form-group col-12">
+          <label>Description :</label>
+          <Field
+                name="description"
+                component="textarea"
+                placeholder="description"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                value={values.description}
+                className={touched.description && errors.description ? "error" : null}
+                rows="4"
+                cols={20}>
+{touched.description && errors.description ? (
                 <div className="error-message">{errors.description}</div>
               ): null}
-        </Form.Group>
-        <Form.Group controlId="price">
+          </Field>
+          </div>
+        </div>
+        <div className="form-row">
+        <Form.Group className="col-6" controlId="price">
           <Form.Label>Price :</Form.Label>
           <Form.Control
             type="text"
@@ -117,7 +154,7 @@ const addProduct=()=> {
                 <div className="error-message">{errors.price}</div>
               ): null}
         </Form.Group>
-        <Form.Group controlId="quantity">
+        <Form.Group className="col-6" controlId="quantity">
           <Form.Label>Quantity :</Form.Label>
           <Form.Control
             type="text"
@@ -135,12 +172,18 @@ const addProduct=()=> {
                 <div className="error-message">{errors.quantity}</div>
               ): null}
         </Form.Group>
+        </div>
         <Form.Group controlId="category">
           <Form.Label>category :</Form.Label>
           
-             <Form.Control as="select">
-      <option>1</option>
-      
+             <Form.Control as="select" name="category" 
+             onChange={handleChange}
+             onBlur={handleBlur}
+             value={values.category}
+             >
+             {statecategory && statecategory.map((cat,index) => 
+             <option key={index} value={cat._id} >{cat.name}</option>
+             )}   
     </Form.Control>
         </Form.Group>
         <Form.Group controlId="photo">
@@ -158,13 +201,15 @@ const addProduct=()=> {
             />
             <Form.File id="photo" label="Select Service Photo" />
         </Form.Group>
-        <BUTTON variant="primary"  type="submit" onSubmit={handleSubmit}> 
-          Submit
+        <AddProductDetail></AddProductDetail>
+        <BUTTON  variant="primary"  type="submit" onSubmit={handleSubmit}> 
+          Add Product Details
         </BUTTON>
-      </Form>
-          )}
+      </Form>)
+}}
       </Formik>
       </CONTAINER>
+      </Layout>
   );
 }
 
