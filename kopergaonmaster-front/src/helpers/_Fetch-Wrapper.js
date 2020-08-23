@@ -16,7 +16,7 @@ function post(url, body) {
     
     const requestOptions = {
         method: 'POST',
-        body: new FormData(body)
+        body: body
     };
     console.log(url +" : "+requestOptions);
     return fetch(url, requestOptions).then(handleResponse);

@@ -1,35 +1,57 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect ,useRef} from 'react';
 import { Formik,Field} from 'formik';
 import {Form} from 'react-bootstrap';
 import * as Yup from 'yup';
 import {productService} from './ProductService';
 import Layout from '../core/Layout';
 import AddProductDetail from './shared/_addProductDetail';
-
+import {alertService} from '../../shared/Alert';
+import {Alert} from '../../shared/Alertgen';
 //
 import CONTAINER from '../../shared/container';
 import BUTTON from '../../shared/button';
 
+const AddProduct=()=> {
+  
+    const  form=useRef();
+    const [statecategory, setstatecategory] = useState(null);
+    useEffect(() => {
+      console.log(statecategory);
+      if(statecategory==null){
+      productService.getCategories().then(objcategories => {
+        setstatecategory(objcategories.data);
+        console.log(objcategories.data);
+    });
+  }
+});
+
+
 const validationSchema = Yup.object().shape({
-    name: Yup.string()
-    .min(2, "*Service Name must have at least 2 characters")
-    .max(100, "*Service Name can't be longer than 100 characters")
-    .required("*Service Name is required"),
-    description: Yup.string()
-    .min(20, "*Description must have at least 2 characters")
-    .required("*Description is required"),
-    price: Yup.string()
-    .required("*Price is required"),
-    quantity: Yup.string()
-    .required("*Quantity is required")
-  });
+  name: Yup.string()
+  .min(2, "*Service Name must have at least 2 characters")
+  .max(100, "*Service Name can't be longer than 100 characters")
+  .required("*Service Name is required"),
+  description: Yup.string()
+  .min(20, "*Description must have at least 2 characters")
+  .required("*Description is required"),
+  price: Yup.string()
+  .required("*Price is required"),
+  quantity: Yup.string()
+  .required("*Quantity is required")
+});
 
- 
+function handleSubmit(e) {
+  e.preventDefault();
+  //console.log(form.current);
+  //const frmData=new FormData(form.current);
+  alertService.success('Product Added', { keepAfterRouteChange: true });
+  //console.log(frmData);
+  //productService.create(frmData).then(data=>{
+   // console.log(data);
+   // alertService.success('Product Added', { keepAfterRouteChange: true });
+  //});
+}
 
-
-const addProduct=()=> {
-    
-    
   const initialValues = { 
     serviceCode:"",
     name:"",
@@ -46,44 +68,31 @@ const addProduct=()=> {
     redirectToProfile:false,
     formData:""
   };
-  function onSubmit(params) {
-    productService.create(params).then(data=>{
-      console.log(data);
-    });
-}
+  
 
 
   return (
     <Layout title="Add Product" description="This is the Home page">
+<Alert/>
       <CONTAINER>
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
-        onSubmit={async values => onSubmit(values)
-        }
+        
       >
           
         {( {values,
           errors,
           touched,
           handleChange,
-          handleBlur,
-          handleSubmit }) => {
-            const [statecategory, setstatecategory] = useState(null);
-    useEffect(() => {
-      //productService.getCategories().then(objcategories => {
-        //const fields = ['title', 'firstName', 'lastName', 'email', 'role'];
-        //fields.forEach(field => setFieldValue(field, user[field], false));
-        
-        //console.log("mkk"+JSON.stringify(objcategories.data));
-        //setstatecategory(objcategories.data);
-    //});
-      //setstatecategory(getCategories());
-}, [statecategory]);
-      return(<Form className="mx-auto"  onSubmit={handleSubmit}>
+          handleBlur}) => {
+            
+
+
+      return(<Form id="addProduct" ref={form} className="mx-auto"  onSubmit={handleSubmit}>
         <div className="form-row">
         <Form.Group controlId="serviceCode" className="col-6">
-          <Form.Label>Service Coe :</Form.Label>
+          <Form.Label>Service Code :</Form.Label>
           <Form.Control
             type="text"
             name="serviceCode"
@@ -213,4 +222,4 @@ const addProduct=()=> {
   );
 }
 
-export default addProduct;
+export default AddProduct;
